@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sort"
 	"time"
 
 	"github.com/syedkarim/snare/internal/config"
@@ -58,11 +59,17 @@ func runAudit(o auditOpts) int {
 		fmt.Fprintln(o.out, "snare:", err)
 		return 2
 	}
+	sort.Slice(candidates, func(i, j int) bool { return candidates[i].Name < candidates[j].Name })
 
 	var allow *config.Allowlist
 	if o.allowlist != "" {
 		if data, err := os.ReadFile(o.allowlist); err == nil {
-			allow, _ = config.ParseAllowlist(data)
+			a, perr := config.ParseAllowlist(data)
+			if perr != nil {
+				fmt.Fprintf(o.out, "snare: warning: ignoring allowlist %s: %v\n", o.allowlist, perr)
+			} else {
+				allow = a
+			}
 		}
 	}
 
@@ -108,7 +115,7 @@ func main() {
 		af.StringVar(&o.failOn, "fail-on", "high", "min tier to fail: low|medium|high|critical")
 		af.StringVar(&o.format, "format", "human", "output format: human|json|sarif")
 		af.StringVar(&o.allowlist, "allowlist", ".snareignore", "allowlist file")
-		_ = af.Parse(os.Args[2:])
+		af.Parse(os.Args[2:])
 		if o.base == "" || o.head == "" {
 			fmt.Fprintln(os.Stderr, "snare audit: --base and --head are required")
 			os.Exit(2)
