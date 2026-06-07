@@ -24,6 +24,11 @@ func Human(results []model.Result) string {
 	var b strings.Builder
 	flagged := 0
 	for _, r := range results {
+		if r.Errored {
+			fmt.Fprintf(&b, "[ERROR] %s@%s: could not evaluate — %s\n", r.Candidate.Name, r.Candidate.Version, r.ErrMsg)
+			flagged++
+			continue
+		}
 		if r.TopTier() == model.Clear {
 			continue
 		}
@@ -45,12 +50,23 @@ func JSON(results []model.Result) string {
 		Signal, Explanation, Locator, Tier string
 	}
 	type jsonResult struct {
-		Name, Version, Tier string
-		Evidence            []jsonEvidence
+		Name     string        `json:"name"`
+		Version  string        `json:"version"`
+		Tier     string        `json:"tier"`
+		Errored  bool          `json:"errored"`
+		ErrMsg   string        `json:"errMsg,omitempty"`
+		Evidence []jsonEvidence `json:"evidence,omitempty"`
 	}
+	// JSON intentionally includes ALL results (full audit trail), not just flagged ones.
 	var out []jsonResult
 	for _, r := range results {
-		jr := jsonResult{Name: r.Candidate.Name, Version: r.Candidate.Version, Tier: r.TopTier().String()}
+		jr := jsonResult{
+			Name:    r.Candidate.Name,
+			Version: r.Candidate.Version,
+			Tier:    r.TopTier().String(),
+			Errored: r.Errored,
+			ErrMsg:  r.ErrMsg,
+		}
 		for _, e := range r.Evidence {
 			jr.Evidence = append(jr.Evidence, jsonEvidence{e.Signal, e.Explanation, e.Locator, e.Tier.String()})
 		}
@@ -71,11 +87,19 @@ func SARIF(results []model.Result) string {
 	}
 	var rs []sarifResult
 	for _, r := range results {
+		name, version := r.Candidate.Name, r.Candidate.Version
+		if r.Errored {
+			var sr sarifResult
+			sr.RuleID = "snare.evaluation_error"
+			sr.Level = "note"
+			sr.Message.Text = fmt.Sprintf("%s@%s: could not evaluate — %s", name, version, r.ErrMsg)
+			rs = append(rs, sr)
+		}
 		for _, e := range r.Evidence {
 			var sr sarifResult
 			sr.RuleID = e.Signal
 			sr.Level = sarifLevel(e.Tier)
-			sr.Message.Text = fmt.Sprintf("%s@%s: %s", r.Candidate.Name, r.Candidate.Version, e.Explanation)
+			sr.Message.Text = fmt.Sprintf("%s@%s: %s", name, version, e.Explanation)
 			rs = append(rs, sr)
 		}
 	}

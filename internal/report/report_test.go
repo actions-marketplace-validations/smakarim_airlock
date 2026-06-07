@@ -46,3 +46,44 @@ func TestSARIFHasRuleAndResult(t *testing.T) {
 		t.Errorf("sarif missing ruleId/result:\n%s", out)
 	}
 }
+
+func erroredResults() []model.Result {
+	return []model.Result{{
+		Candidate: model.Candidate{Name: "evil-sdk", Version: "1.0.0"},
+		Errored:   true,
+		ErrMsg:    "registry 404",
+	}}
+}
+
+func TestHumanSurfacesErroredResult(t *testing.T) {
+	out := Human(erroredResults())
+	if !strings.Contains(out, "evil-sdk@1.0.0") {
+		t.Errorf("human report missing package name:\n%s", out)
+	}
+	if !strings.Contains(out, "ERROR") {
+		t.Errorf("human report missing ERROR marker:\n%s", out)
+	}
+	if !strings.Contains(out, "registry 404") {
+		t.Errorf("human report missing error message:\n%s", out)
+	}
+	if strings.Contains(out, "no risky packages found") {
+		t.Errorf("human report should not claim no risky packages when there are errored ones:\n%s", out)
+	}
+}
+
+func TestJSONIncludesErrored(t *testing.T) {
+	out := JSON(erroredResults())
+	if !strings.Contains(out, `"errored"`) {
+		t.Errorf("json missing errored field:\n%s", out)
+	}
+	if !strings.Contains(out, "registry 404") {
+		t.Errorf("json missing error message:\n%s", out)
+	}
+}
+
+func TestSARIFIncludesErrored(t *testing.T) {
+	out := SARIF(erroredResults())
+	if !strings.Contains(out, "snare.evaluation_error") {
+		t.Errorf("sarif missing snare.evaluation_error rule:\n%s", out)
+	}
+}
