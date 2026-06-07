@@ -56,4 +56,7 @@ func TestDiffBadJSON(t *testing.T) {
 	if _, err := Diff([]byte("{"), []byte(headLock)); err == nil {
 		t.Error("expected error on malformed base lockfile")
 	}
+	if _, err := Diff([]byte(baseLock), []byte("{")); err == nil {
+		t.Error("expected error on malformed head lockfile")
+	}
 }

@@ -44,7 +44,7 @@ func pkgName(path string) string {
 }
 
 // Diff returns the packages present-and-newer (or present-and-new) in head
-// relative to base.
+// relative to base. The returned slice order is unspecified.
 func Diff(base, head []byte) ([]model.Candidate, error) {
 	baseV, err := parse(base, "base")
 	if err != nil {
