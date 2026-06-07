@@ -15,9 +15,20 @@ inputs:
     required: false
     default: high
   format:
-    description: Output format (human|json|sarif)
+    description: >
+      Output format (human|json|sarif). This action defaults to sarif (so the
+      output can be uploaded to GitHub code-scanning); note this differs from
+      the snare CLI binary's own default of human.
     required: false
     default: sarif
+  registry:
+    description: npm registry base URL
+    required: false
+    default: https://registry.npmjs.org
+  allowlist:
+    description: Allowlist file path
+    required: false
+    default: .snareignore
 
 runs:
   using: composite
@@ -29,6 +40,8 @@ runs:
 
     - name: Install snare
       shell: bash
+      # actions/setup-go@v5 puts $(go env GOPATH)/bin on PATH, so the snare
+      # binary installed here is directly invocable in the next step.
       run: go install github.com/syedkarim/snare/cmd/snare@latest
 
     - name: Run snare audit
@@ -47,4 +60,6 @@ runs:
           --base "${{ inputs.base }}" \
           --head "${{ inputs.head }}" \
           --fail-on "${{ inputs.fail-on }}" \
-          --format "${{ inputs.format }}"
+          --format "${{ inputs.format }}" \
+          --registry "${{ inputs.registry }}" \
+          --allowlist "${{ inputs.allowlist }}"
