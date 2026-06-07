@@ -33,6 +33,9 @@ func ParseAllowlist(data []byte) (*Allowlist, error) {
 			return nil, fmt.Errorf("line %d: bad entry %q, want name@version", ln, spec)
 		}
 		name, ver := spec[:at], spec[at+1:]
+		if ver == "" {
+			return nil, fmt.Errorf("line %d: entry %q has an empty version; use name@version or name@*", ln, spec)
+		}
 		if ver == "*" {
 			al.any[name] = reason
 		} else {
