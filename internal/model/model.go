@@ -5,7 +5,7 @@ package model
 type Tier int
 
 const (
-	Clear Tier = iota
+	Clear Tier = iota // no finding — safe to proceed
 	Low
 	Medium
 	High
@@ -14,6 +14,7 @@ const (
 
 func (t Tier) AtLeast(o Tier) bool { return t >= o }
 
+// String returns the upper-case name of the tier.
 func (t Tier) String() string {
 	switch t {
 	case Critical:
@@ -88,7 +89,7 @@ type Result struct {
 	ErrMsg  string
 }
 
-// TopTier returns the highest evidence tier, or Clear if there is none.
+// TopTier returns the highest evidence tier, or Clear when Evidence is empty or all tiers are Clear.
 func (r Result) TopTier() Tier {
 	top := Clear
 	for _, e := range r.Evidence {
