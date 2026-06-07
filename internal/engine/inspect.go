@@ -37,8 +37,9 @@ var exfilOrExec = []pattern{
 	{"child_process", "spawns a child process"},
 	{"http.get", "makes an outbound HTTP request"},
 	{"https.get", "makes an outbound HTTPS request"},
+	{"require('http", "imports a network module"},
+	{"require(\"http", "imports a network module"},
 	{"fetch(", "makes an outbound fetch request"},
-	{"Buffer.from(", "decodes an embedded blob"},
 	{"eval(", "evaluates dynamic code"},
 }
 
@@ -50,6 +51,7 @@ func hookReferenced(p model.PackageData) []string {
 		bodies = append(bodies, body)
 		for _, tok := range strings.Fields(body) {
 			tok = strings.Trim(tok, "'\"")
+			tok = strings.TrimPrefix(tok, "./")
 			if strings.HasSuffix(tok, ".js") {
 				if f, ok := p.Files[tok]; ok {
 					bodies = append(bodies, f)
@@ -85,9 +87,12 @@ func (InspectSignal) Evaluate(p model.PackageData) []model.Evidence {
 			Locator:     "install script",
 		})
 	case egress:
+		// Egress-only (no credential read) is Low: legit native-build wrappers
+		// and update-notifiers frequently make outbound requests, so a single
+		// network/process pattern without credential access is weak standalone signal.
 		ev = append(ev, model.Evidence{
 			Signal:      "inspect.egress",
-			Tier:        model.Medium,
+			Tier:        model.Low,
 			Explanation: "install hook " + egressReason,
 			Locator:     "install script",
 		})
