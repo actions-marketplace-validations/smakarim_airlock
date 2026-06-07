@@ -50,7 +50,8 @@ func loadCases(t *testing.T, dir string) map[string]corpusCase {
 	return cases
 }
 
-func tierVal(s string) model.Tier {
+func tierVal(t *testing.T, name, s string) model.Tier {
+	t.Helper()
 	switch s {
 	case "CRITICAL":
 		return model.Critical
@@ -60,15 +61,22 @@ func tierVal(s string) model.Tier {
 		return model.Medium
 	case "LOW":
 		return model.Low
-	default:
+	case "CLEAR":
 		return model.Clear
+	default:
+		t.Fatalf("%s: unknown tier %q (want CRITICAL|HIGH|MEDIUM|LOW|CLEAR)", name, s)
+		return model.Clear // unreachable
 	}
 }
 
 func TestCorpusGoodStaysQuiet(t *testing.T) {
 	eng := engine.New(engine.Default(time.Now()))
-	for name, c := range loadCases(t, "../../testdata/corpus/good") {
-		bound := tierVal(c.MaxTier)
+	cases := loadCases(t, "../../testdata/corpus/good")
+	if len(cases) == 0 {
+		t.Fatal("no good-corpus fixtures found — expected at least one (FP regression gate is the product's quality bar)")
+	}
+	for name, c := range cases {
+		bound := tierVal(t, name, c.MaxTier)
 		if got := eng.Score(c.Data).TopTier(); got > bound {
 			t.Errorf("%s: scored %v, exceeds allowed max %v (FALSE POSITIVE)", name, got, bound)
 		}
@@ -77,8 +85,12 @@ func TestCorpusGoodStaysQuiet(t *testing.T) {
 
 func TestCorpusMaliciousIsCaught(t *testing.T) {
 	eng := engine.New(engine.Default(time.Now()))
-	for name, c := range loadCases(t, "../../testdata/corpus/malicious") {
-		floor := tierVal(c.MinTier)
+	cases := loadCases(t, "../../testdata/corpus/malicious")
+	if len(cases) == 0 {
+		t.Fatal("no malicious-corpus fixtures found — expected at least one (FN regression gate is the product's quality bar)")
+	}
+	for name, c := range cases {
+		floor := tierVal(t, name, c.MinTier)
 		if got := eng.Score(c.Data).TopTier(); got < floor {
 			t.Errorf("%s: scored %v, below required min %v (FALSE NEGATIVE)", name, got, floor)
 		}
