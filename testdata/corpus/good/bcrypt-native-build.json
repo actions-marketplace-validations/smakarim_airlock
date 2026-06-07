@@ -1,0 +1,17 @@
+{
+  "data": {
+    "Name": "bcrypt",
+    "Version": "5.1.1",
+    "Registry": {
+      "FirstPublished": "2013-01-01T00:00:00Z",
+      "VersionPublished": "2023-08-01T00:00:00Z",
+      "WeeklyDownloads": 1500000,
+      "Maintainers": 3,
+      "Repository": "git+https://github.com/kelektiv/node.bcrypt.js.git",
+      "LatestVersion": "5.1.1"
+    },
+    "Scripts": {"install": "node-gyp-build"},
+    "Files": {"binding.gyp": "{ 'targets': [ { 'target_name': 'bcrypt_lib' } ] }"}
+  },
+  "max_tier": "LOW"
+}

