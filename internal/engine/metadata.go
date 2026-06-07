@@ -64,6 +64,14 @@ func (s MetadataSignal) Evaluate(p model.PackageData) []model.Evidence {
 }
 
 // isEstablished is the FP guardrail: old, widely-downloaded, has a repo.
+//
+// NOTE: this is dormant in production until the downloads endpoint is wired.
+// model.RegistryInfo.WeeklyDownloads is currently -1 (unknown), so the
+// `popular` check below is always false and no package is treated as
+// established — meaning the engine gate never downgrades name.* findings yet.
+// Once weekly downloads are populated, established packages will begin to be
+// downgraded. This is intentional: it fails safe (no false suppression) until
+// the data it depends on exists.
 func isEstablished(p model.PackageData, now time.Time) bool {
 	old := ageDays(p, now) > 365
 	popular := p.Registry.WeeklyDownloads > 10_000
