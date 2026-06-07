@@ -1,0 +1,50 @@
+name: snare audit
+description: >
+  Audit npm packages added or bumped by a pull request for typosquat,
+  dependency-confusion, and malicious install-hook patterns — before they execute.
+
+inputs:
+  base:
+    description: Path to the base branch package-lock.json (PR target)
+    required: true
+  head:
+    description: Path to the head branch package-lock.json (PR branch)
+    required: true
+  fail-on:
+    description: Minimum tier that fails the build (low|medium|high|critical)
+    required: false
+    default: high
+  format:
+    description: Output format (human|json|sarif)
+    required: false
+    default: sarif
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: "1.26"
+
+    - name: Install snare
+      shell: bash
+      run: go install github.com/syedkarim/snare/cmd/snare@latest
+
+    - name: Run snare audit
+      shell: bash
+      # Writes SARIF (or human/json) to stdout. To upload SARIF to GitHub
+      # code-scanning, capture it to a file and follow with:
+      #
+      #   - uses: github/codeql-action/upload-sarif@v3
+      #     with:
+      #       sarif_file: snare-results.sarif
+      #
+      # Example with file capture:
+      #   run: snare audit ... --format sarif > snare-results.sarif
+      run: |
+        snare audit \
+          --base "${{ inputs.base }}" \
+          --head "${{ inputs.head }}" \
+          --fail-on "${{ inputs.fail-on }}" \
+          --format "${{ inputs.format }}"
