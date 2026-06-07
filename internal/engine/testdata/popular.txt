@@ -1,0 +1,7 @@
+react
+requests
+lodash
+express
+axios
+chalk
+left-pad
