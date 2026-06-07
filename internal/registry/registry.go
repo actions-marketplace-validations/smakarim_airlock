@@ -42,6 +42,8 @@ type Client interface {
 	Tarball(url string) ([]byte, error)
 }
 
+var _ Client = (*HTTPClient)(nil)
+
 // HTTPClient is the live npm-registry implementation.
 type HTTPClient struct {
 	BaseURL string // e.g. https://registry.npmjs.org
