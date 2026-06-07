@@ -3,7 +3,7 @@ package engine
 import (
 	"strings"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 // InspectSignal statically scans hook scripts and the files they reference for

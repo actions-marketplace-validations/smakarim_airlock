@@ -8,13 +8,13 @@ import (
 	"sort"
 	"time"
 
-	"github.com/syedkarim/snare/internal/config"
-	"github.com/syedkarim/snare/internal/engine"
-	"github.com/syedkarim/snare/internal/fetcher"
-	"github.com/syedkarim/snare/internal/model"
-	"github.com/syedkarim/snare/internal/registry"
-	"github.com/syedkarim/snare/internal/report"
-	"github.com/syedkarim/snare/internal/resolver"
+	"github.com/smakarim/airlock/internal/config"
+	"github.com/smakarim/airlock/internal/engine"
+	"github.com/smakarim/airlock/internal/fetcher"
+	"github.com/smakarim/airlock/internal/model"
+	"github.com/smakarim/airlock/internal/registry"
+	"github.com/smakarim/airlock/internal/report"
+	"github.com/smakarim/airlock/internal/resolver"
 )
 
 var version = "0.0.0-dev"
@@ -46,17 +46,17 @@ func tierFromString(s string) model.Tier {
 func runAudit(o auditOpts) int {
 	baseData, err := os.ReadFile(o.base)
 	if err != nil {
-		fmt.Fprintln(o.out, "snare: read base lockfile:", err)
+		fmt.Fprintln(o.out, "airlock: read base lockfile:", err)
 		return 2
 	}
 	headData, err := os.ReadFile(o.head)
 	if err != nil {
-		fmt.Fprintln(o.out, "snare: read head lockfile:", err)
+		fmt.Fprintln(o.out, "airlock: read head lockfile:", err)
 		return 2
 	}
 	candidates, err := resolver.Diff(baseData, headData)
 	if err != nil {
-		fmt.Fprintln(o.out, "snare:", err)
+		fmt.Fprintln(o.out, "airlock:", err)
 		return 2
 	}
 	sort.Slice(candidates, func(i, j int) bool { return candidates[i].Name < candidates[j].Name })
@@ -66,7 +66,7 @@ func runAudit(o auditOpts) int {
 		if data, err := os.ReadFile(o.allowlist); err == nil {
 			a, perr := config.ParseAllowlist(data)
 			if perr != nil {
-				fmt.Fprintf(o.out, "snare: warning: ignoring allowlist %s: %v\n", o.allowlist, perr)
+				fmt.Fprintf(o.out, "airlock: warning: ignoring allowlist %s: %v\n", o.allowlist, perr)
 			} else {
 				allow = a
 			}
@@ -102,7 +102,7 @@ func runAudit(o auditOpts) int {
 }
 
 func main() {
-	fs := flag.NewFlagSet("snare", flag.ExitOnError)
+	fs := flag.NewFlagSet("airlock", flag.ExitOnError)
 	showVersion := fs.Bool("version", false, "print version and exit")
 
 	if len(os.Args) >= 2 && os.Args[1] == "audit" {
@@ -114,10 +114,10 @@ func main() {
 		af.StringVar(&o.registry, "registry", "https://registry.npmjs.org", "npm registry base URL")
 		af.StringVar(&o.failOn, "fail-on", "high", "min tier to fail: low|medium|high|critical")
 		af.StringVar(&o.format, "format", "human", "output format: human|json|sarif")
-		af.StringVar(&o.allowlist, "allowlist", ".snareignore", "allowlist file")
+		af.StringVar(&o.allowlist, "allowlist", ".airlockignore", "allowlist file")
 		af.Parse(os.Args[2:])
 		if o.base == "" || o.head == "" {
-			fmt.Fprintln(os.Stderr, "snare audit: --base and --head are required")
+			fmt.Fprintln(os.Stderr, "airlock audit: --base and --head are required")
 			os.Exit(2)
 		}
 		os.Exit(runAudit(o))
@@ -125,9 +125,9 @@ func main() {
 
 	_ = fs.Parse(os.Args[1:])
 	if *showVersion {
-		fmt.Println("snare", version)
+		fmt.Println("airlock", version)
 		return
 	}
-	fmt.Fprintln(os.Stderr, "usage: snare audit --base <lock> --head <lock> [flags]")
+	fmt.Fprintln(os.Stderr, "usage: airlock audit --base <lock> --head <lock> [flags]")
 	os.Exit(2)
 }

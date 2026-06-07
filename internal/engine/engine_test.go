@@ -3,7 +3,7 @@ package engine
 import (
 	"testing"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 // stubSignal emits a fixed evidence (or none).

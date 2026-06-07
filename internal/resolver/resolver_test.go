@@ -5,7 +5,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 const baseLock = `{

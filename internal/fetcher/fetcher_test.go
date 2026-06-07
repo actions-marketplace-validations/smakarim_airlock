@@ -7,9 +7,9 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/syedkarim/snare/internal/fetcher"
-	"github.com/syedkarim/snare/internal/model"
-	"github.com/syedkarim/snare/internal/registry"
+	"github.com/smakarim/airlock/internal/fetcher"
+	"github.com/smakarim/airlock/internal/model"
+	"github.com/smakarim/airlock/internal/registry"
 )
 
 // fakeRegistry is an in-memory implementation of registry.Client.

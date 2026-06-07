@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 // ExitCode returns 1 if any result meets or exceeds failOn, else 0.
@@ -39,9 +39,9 @@ func Human(results []model.Result) string {
 		}
 	}
 	if flagged == 0 {
-		return "snare: no risky packages found in diff\n"
+		return "airlock: no risky packages found in diff\n"
 	}
-	fmt.Fprintf(&b, "\nsnare: %d package(s) flagged\n", flagged)
+	fmt.Fprintf(&b, "\nairlock: %d package(s) flagged\n", flagged)
 	return b.String()
 }
 
@@ -90,7 +90,7 @@ func SARIF(results []model.Result) string {
 		name, version := r.Candidate.Name, r.Candidate.Version
 		if r.Errored {
 			var sr sarifResult
-			sr.RuleID = "snare.evaluation_error"
+			sr.RuleID = "airlock.evaluation_error"
 			sr.Level = "note"
 			sr.Message.Text = fmt.Sprintf("%s@%s: could not evaluate — %s", name, version, r.ErrMsg)
 			rs = append(rs, sr)
@@ -107,7 +107,7 @@ func SARIF(results []model.Result) string {
 		"version": "2.1.0",
 		"$schema": "https://json.schemastore.org/sarif-2.1.0.json",
 		"runs": []map[string]any{{
-			"tool":    map[string]any{"driver": map[string]any{"name": "snare", "rules": []any{}}},
+			"tool":    map[string]any{"driver": map[string]any{"name": "airlock", "rules": []any{}}},
 			"results": rs,
 		}},
 	}

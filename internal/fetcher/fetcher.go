@@ -10,8 +10,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/syedkarim/snare/internal/model"
-	"github.com/syedkarim/snare/internal/registry"
+	"github.com/smakarim/airlock/internal/model"
+	"github.com/smakarim/airlock/internal/registry"
 )
 
 const maxTextFile = 256 << 10 // only scan text files up to 256 KiB

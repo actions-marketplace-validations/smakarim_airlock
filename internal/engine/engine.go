@@ -5,7 +5,7 @@ package engine
 import (
 	"strings"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 // Signal inspects a package and emits zero or more pieces of evidence.

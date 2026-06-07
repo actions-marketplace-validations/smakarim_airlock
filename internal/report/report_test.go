@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 func sampleResults() []model.Result {
@@ -83,7 +83,7 @@ func TestJSONIncludesErrored(t *testing.T) {
 
 func TestSARIFIncludesErrored(t *testing.T) {
 	out := SARIF(erroredResults())
-	if !strings.Contains(out, "snare.evaluation_error") {
-		t.Errorf("sarif missing snare.evaluation_error rule:\n%s", out)
+	if !strings.Contains(out, "airlock.evaluation_error") {
+		t.Errorf("sarif missing airlock.evaluation_error rule:\n%s", out)
 	}
 }

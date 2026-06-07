@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/syedkarim/snare/internal/engine"
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/engine"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 // corpusCase is a stored PackageData fixture plus its expected tier bound.

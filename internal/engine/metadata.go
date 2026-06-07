@@ -3,7 +3,7 @@ package engine
 import (
 	"time"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 // refNow is the reference "now" used by tests for deterministic age math.

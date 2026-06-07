@@ -1,4 +1,4 @@
-// Package config parses snare policy and the .snareignore allowlist.
+// Package config parses airlock policy and the .airlockignore allowlist.
 package config
 
 import (

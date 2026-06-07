@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 // NameSignal flags typosquats (lexically near a popular name) and

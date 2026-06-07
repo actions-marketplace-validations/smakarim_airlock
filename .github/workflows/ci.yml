@@ -27,4 +27,4 @@ jobs:
         run: go test ./...
 
       - name: go build
-        run: go build ./cmd/snare
+        run: go build ./cmd/airlock

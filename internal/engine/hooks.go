@@ -4,7 +4,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 // HookSignal flags the presence of install lifecycle hooks. Presence alone is

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/syedkarim/snare/internal/model"
+	"github.com/smakarim/airlock/internal/model"
 )
 
 type lockfile struct {

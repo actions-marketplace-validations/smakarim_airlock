@@ -1,4 +1,4 @@
-name: snare audit
+name: airlock audit
 description: >
   Audit npm packages added or bumped by a pull request for typosquat,
   dependency-confusion, and malicious install-hook patterns — before they execute.
@@ -18,7 +18,7 @@ inputs:
     description: >
       Output format (human|json|sarif). This action defaults to sarif (so the
       output can be uploaded to GitHub code-scanning); note this differs from
-      the snare CLI binary's own default of human.
+      the airlock CLI binary's own default of human.
     required: false
     default: sarif
   registry:
@@ -28,7 +28,7 @@ inputs:
   allowlist:
     description: Allowlist file path
     required: false
-    default: .snareignore
+    default: .airlockignore
 
 runs:
   using: composite
@@ -38,25 +38,25 @@ runs:
       with:
         go-version: "1.26"
 
-    - name: Install snare
+    - name: Install airlock
       shell: bash
-      # actions/setup-go@v5 puts $(go env GOPATH)/bin on PATH, so the snare
+      # actions/setup-go@v5 puts $(go env GOPATH)/bin on PATH, so the airlock
       # binary installed here is directly invocable in the next step.
-      run: go install github.com/syedkarim/snare/cmd/snare@latest
+      run: go install github.com/smakarim/airlock/cmd/airlock@latest
 
-    - name: Run snare audit
+    - name: Run airlock audit
       shell: bash
       # Writes SARIF (or human/json) to stdout. To upload SARIF to GitHub
       # code-scanning, capture it to a file and follow with:
       #
       #   - uses: github/codeql-action/upload-sarif@v3
       #     with:
-      #       sarif_file: snare-results.sarif
+      #       sarif_file: airlock-results.sarif
       #
       # Example with file capture:
-      #   run: snare audit ... --format sarif > snare-results.sarif
+      #   run: airlock audit ... --format sarif > airlock-results.sarif
       run: |
-        snare audit \
+        airlock audit \
           --base "${{ inputs.base }}" \
           --head "${{ inputs.head }}" \
           --fail-on "${{ inputs.fail-on }}" \

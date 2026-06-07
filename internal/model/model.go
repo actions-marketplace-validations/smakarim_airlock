@@ -1,4 +1,4 @@
-// Package model holds the shared data types passed between snare's units.
+// Package model holds the shared data types passed between airlock's units.
 package model
 
 // Tier is an ordered severity level. Higher value = more severe.

@@ -1,3 +1,3 @@
-module github.com/syedkarim/snare
+module github.com/smakarim/airlock
 
 go 1.26
