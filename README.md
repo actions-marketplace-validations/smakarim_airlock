@@ -57,7 +57,7 @@ snare: 1 package(s) flagged
 
 snare runs two detection paths:
 
-**IDENTITY** — flags names that are within 2 edits (OSA / restricted Damerau-Levenshtein) of a bundled list of popular npm packages (`name.typosquat`), or that carry implausible version strings used to win dependency-confusion resolution races such as `99.99.99` (`name.depconfusion`). Identity findings are gated down to LOW for packages that registry metadata confirms as well-established (old, widely downloaded, has a declared source repository), so genuinely popular packages with slightly unusual spellings don't produce false positives.
+**IDENTITY** — flags names that are within 2 edits (OSA / restricted Damerau-Levenshtein) of a bundled list of popular npm packages (`name.typosquat`), or that carry implausible version strings used to win dependency-confusion resolution races such as `99.99.99` (`name.depconfusion`). The engine *will* gate identity findings down to LOW for packages that registry metadata confirms as well-established (old, widely downloaded, has a declared source repository), so genuinely popular packages with slightly unusual spellings don't produce false positives — but this downgrade only activates once the weekly-downloads signal is wired (v1.1). In v1 this gate is dormant and fails safe: it never suppresses a finding.
 
 **BEHAVIOR** — inspects `preinstall`, `install`, and `postinstall` lifecycle hooks and the `.js` files they invoke. `hook.lifecycle` (LOW) fires on mere presence. If the script reads credential material (env vars like `AWS_SECRET_ACCESS_KEY`, `VAULT_TOKEN`, `GITHUB_TOKEN`, or files like `.npmrc`, `.aws/credentials`, `id_rsa`) *and* performs network egress (`curl`, `fetch`, `https.get`, `child_process`, …), severity escalates to CRITICAL (`inspect.exfil`). Credential read without egress is HIGH (`inspect.credread`); egress without credential read is LOW (`inspect.egress`).
 
@@ -103,6 +103,7 @@ Pass a custom path with `--allowlist /path/to/file`.
 - **Not a CVE / vulnerability scanner.** snare does not check NVD, OSV, or GitHub Advisory data. Use [trivy](https://github.com/aquasecurity/trivy), [grype](https://github.com/anchore/grype), or [osv-scanner](https://github.com/google/osv-scanner) alongside snare — they are complementary, not overlapping.
 - **npm only in v1.** PyPI, RubyGems, Maven, and other ecosystems are not supported.
 - **PR-check shape only.** snare audits the diff between two lockfiles. A true pre-install wrapper that intercepts `npm install` in real time is future work.
+- **Reputation gate dormant in v1.** The metadata reputation gate that downgrades typosquat findings on well-established packages is present but DORMANT in v1 — it activates once weekly-download data is wired (v1.1). Until then snare errs toward flagging (fails safe).
 
 ## Design note
 
