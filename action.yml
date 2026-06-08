@@ -1,7 +1,12 @@
 name: airlock audit
 description: >
   Audit npm packages added or bumped by a pull request for typosquat,
-  dependency-confusion, and malicious install-hook patterns — before they execute.
+  dependency-confusion, and malicious install-hook patterns, before they execute.
+author: smakarim
+
+branding:
+  icon: shield
+  color: blue
 
 inputs:
   base:
